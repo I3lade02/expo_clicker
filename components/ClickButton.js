@@ -9,6 +9,8 @@ export default function ClickButton({ onClick, theme, scorePerClick }) {
   const [showFloat, setShowFloat] = useState(false);
 
   const handlePress = () => {
+    onClick();
+
     Animated.sequence([
       Animated.timing(scaleAnim, {
         toValue: 0.85, 
