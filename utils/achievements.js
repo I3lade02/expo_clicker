@@ -1,4 +1,3 @@
-// utils/achievements.js
 export const achievementList = [
   {
     id: 'score_100',

@@ -1,4 +1,3 @@
-// components/Shop.js
 import React from 'react';
 import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native';
 import { tapUpgrades, autoClickerUpgrades } from '../utils/upgrades';

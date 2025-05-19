@@ -1,4 +1,3 @@
-
 export const tapUpgrades = [
     {
         id: 'tap_1',
