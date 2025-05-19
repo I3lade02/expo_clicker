@@ -3,6 +3,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainScreen from '../screens/MainScreen';
 import AchievementsScreen from '../screens/AchievementsScreen';
+import ThemeShopScreen from '../screens/ThemeShopScreen';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -27,6 +28,7 @@ export default function AppNavigator() {
         >
             <Drawer.Screen name='Game' component={MainStack} />
             <Drawer.Screen name='Achievements' component={AchievementsScreen} />
+            <Drawer.Screen name='Theme shop' component={ThemeShopScreen} />
         </Drawer.Navigator>
     );
 }

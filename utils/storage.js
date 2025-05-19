@@ -9,6 +9,8 @@ export const loadGameData = async () => {
       'ownedAutoClickers',
       'achievements',
       'prestigeCount',
+      'selectedTheme',
+      'unlockedThemes',
     ]);
 
     return {
@@ -17,6 +19,8 @@ export const loadGameData = async () => {
       ownedAutoClickers: JSON.parse(data[2][1] || '{}'),
       achievements: JSON.parse(data[3][1] || '[]'),
       prestigeCount: parseInt(data[4][1]) || 0,
+      selectedTheme: data[5][1] || 'default',
+      unlockedThemes: JSON.parse(data[6][1] || '["default"]'),
     };
   } catch (err) {
     console.error('Failed to load game data:', err);
@@ -33,6 +37,8 @@ export const saveGameData = async (data) => {
       ['ownedAutoClickers', JSON.stringify(data.ownedAutoClickers || {})],
       ['achievements', JSON.stringify(data.achievements || [])],
       ['prestigeCount', (data.prestigeCount || 0).toString()],
+      ['selectedTheme', data.selectedTheme || 'default'],
+      ['unlockedThemes', JSON.stringify(data.unlockedThemes || ['default'])],
     ]);
   } catch (err) {
     console.error('Failed to save game data:', err);
