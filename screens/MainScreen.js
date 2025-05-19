@@ -164,6 +164,7 @@ export default function MainScreen() {
       <ClickButton
         onClick={() => setScore(prev => prev + totalPointsPerClick * prestigeMultiplier)}
         theme={theme}
+        scorePerClick={Math.floor(totalPointsPerClick * prestigeMultiplier)}
       />
 
       <Shop
