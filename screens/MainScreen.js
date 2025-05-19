@@ -15,26 +15,30 @@ export default function MainScreen() {
   const [achievements, setAchievements] = useState([]);
   const [prestigeCount, setPrestigeCount] = useState(0);
   const [selectedTheme, setSelectedTheme] = useState('default');
+  const [unlockedThemes, setUnlockedThemes] = useState(['default']);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const prestigeMultiplier = 1 + prestigeCount * 0.2;
   const theme = themes.find(t => t.id === selectedTheme) || themes[0];
 
-    useFocusEffect(
-        useCallback(() => {
-            const load = async () => {
-                const data = await loadGameData();
-                if (data) {
-                    setScore(data.score);
-                    setOwnedTapUpgrades(data.ownedTapUpgrades || {});
-                    setOwnedAutoClickers(data.ownedAutoClickers || {});
-                    setAchievements(data.achievements || []);
-                    setPrestigeCount(data.prestigeCount || 0);
-                    setSelectedTheme(data.selectedTheme || 'default');
-                }
-            };
-            load();
-        }, [])
-    );
+  useFocusEffect(
+    useCallback(() => {
+      const load = async () => {
+        const data = await loadGameData();
+        if (data) {
+          setScore(data.score ?? 0);
+          setOwnedTapUpgrades(data.ownedTapUpgrades ?? {});
+          setOwnedAutoClickers(data.ownedAutoClickers ?? {});
+          setAchievements(data.achievements ?? []);
+          setPrestigeCount(data.prestigeCount ?? 0);
+          setSelectedTheme(data.selectedTheme ?? 'default');
+          setUnlockedThemes(data.unlockedThemes ?? ['default']);
+        }
+        setIsInitialized(true);
+      };
+      load();
+    }, [])
+  );
 
   const totalPointsPerClick = Object.entries(ownedTapUpgrades).reduce((sum, [id, qty]) => {
     const upgrade = tapUpgrades.find(u => u.id === id);
@@ -47,13 +51,15 @@ export default function MainScreen() {
   }, 0);
 
   useEffect(() => {
+    if (!isInitialized) return;
     const interval = setInterval(() => {
       setScore(prev => prev + totalAutoClickers * prestigeMultiplier);
     }, 1000);
     return () => clearInterval(interval);
-  }, [totalAutoClickers, prestigeMultiplier]);
+  }, [totalAutoClickers, prestigeMultiplier, isInitialized]);
 
   useEffect(() => {
+    if (!isInitialized) return;
     saveGameData({
       score,
       ownedTapUpgrades,
@@ -61,10 +67,22 @@ export default function MainScreen() {
       achievements,
       prestigeCount,
       selectedTheme,
+      unlockedThemes,
     });
-  }, [score, ownedTapUpgrades, ownedAutoClickers, achievements, prestigeCount, selectedTheme]);
+  }, [
+    score,
+    ownedTapUpgrades,
+    ownedAutoClickers,
+    achievements,
+    prestigeCount,
+    selectedTheme,
+    unlockedThemes,
+    isInitialized,
+  ]);
 
   useEffect(() => {
+    if (!isInitialized) return;
+
     const unlockedIds = achievements.map(a => a.id);
     const newUnlocks = [];
 
@@ -98,9 +116,10 @@ export default function MainScreen() {
         achievements: updatedAchievements,
         prestigeCount,
         selectedTheme,
+        unlockedThemes,
       });
     }
-  }, [score, ownedTapUpgrades, ownedAutoClickers]);
+  }, [score, ownedTapUpgrades, ownedAutoClickers, isInitialized]);
 
   const handlePrestige = () => {
     Alert.alert(
@@ -126,6 +145,7 @@ export default function MainScreen() {
               achievements: [],
               prestigeCount: nextPrestige,
               selectedTheme,
+              unlockedThemes,
             });
 
             Alert.alert('Prestiged!', 'You now earn more with every click!');
@@ -141,7 +161,10 @@ export default function MainScreen() {
         Score: {score}
       </Text>
 
-      <ClickButton onClick={() => setScore(prev => prev + totalPointsPerClick * prestigeMultiplier)} theme={theme} />
+      <ClickButton
+        onClick={() => setScore(prev => prev + totalPointsPerClick * prestigeMultiplier)}
+        theme={theme}
+      />
 
       <Shop
         score={score}
